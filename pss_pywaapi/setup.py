@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name="pss_pywaapi",
-    version="1.1.19",
+    version="1.0.0",
     description="Helper package for interfacing with Wwise using waapi.",
     long_description=readme(),
     long_description_content_type="text/markdown",
