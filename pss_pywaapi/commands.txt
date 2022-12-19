@@ -1,0 +1,9 @@
+pip3 install -i https://test.pypi.org/simple/ pss-pywaapi
+
+python3 setup.py sdist bdist_wheel
+
+python3 -m twine upload --repository testpypi dist/*
+
+pip3 uninstall pss-pywaapi
+
+python3 -m twine upload dist/*
