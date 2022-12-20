@@ -296,14 +296,45 @@ def createWwiseObjectFromArgs(args = {}):
     else:
         return res
 
+def getPropertyAndReferenceNamesForObject(ObjIDorPath=None,classid=None):
+    """Retrieves the list of property and reference names for an object.
+
+    :param ObjIDorPath: The ID (GUID), name, or path of the object
+    :param classid: The class ID to use instead of a specific object
+    :return: The names of properties and references for the object type
+
+    """
+    if not ObjIDorPath and not classid:
+        return False
+    args = {}
+    if classid:
+        args = {
+            "classid": classid
+        }
+    else:
+        args = {
+            "object": ObjIDorPath
+        }
+    try:
+        res = client.call("ak.wwise.core.object.getPropertyAndReferenceNames", args)
+    except Exception as ex:
+        print("call error: {}".format(ex))
+        return False
+    else:
+        return res
+
 def setWwiseObjectWithArgs(args = {}):
     """Set or create wwises object from a custom argument structure.
     Useful if you need to create many complex objects. See ak.wwise.core.object.set in wwise docs
+    Only supported in Wwise 2022 and higher
 
     :param args: A map of custom arguments for ak.wwise.core.object.create
     :return: The newly created or modified wwise object(s) or False
 
     """
+    if not checkWwiseVersionIsAtLeast(2022):
+        print("This feature is only supported in Wwise 2022 and higher")
+        return False
     try:
         res = client.call("ak.wwise.core.object.set", args)
     except Exception as ex:
@@ -311,6 +342,41 @@ def setWwiseObjectWithArgs(args = {}):
         return False
     else:
         return res
+
+def pasteObjectProperties(source=None,targets=[],pasteMode="replaceEntire",inclusion=[],exclusion=[]):
+    """Pastes properties, references and lists from one object to any number of target objects.
+    See https://www.audiokinetic.com/en/library/edge/?source=SDK&id=ak_wwise_core_object_pasteproperties.html
+    Only supported in Wwise 2022 and higher
+
+    :param source: The ID, name, or path of the source object.
+    :param targets: A list of the target objects (The ID, name, or path of the target object)
+    :param pasteMode: Paste mode for lists. Default value is "replaceEntire". With "replaceEntire" all elements in the lists of a target object are removed and all selected elements from the source's lists are copied.
+    :param inclusion: Array of properties, references and lists to include in the paste operation. When not specified, all properties, references and lists are included, and the exclusion defines which ones to exclude
+    :param exclusion: Array of properties, references and lists to exclude from the paste operation. When not specified, no properties, references and lists are excluded.
+    :return: The result structure or False
+
+    """
+    if not checkWwiseVersionIsAtLeast(2022):
+        print("This feature is only supported in Wwise 2022 and higher")
+        return False
+    if not source or not targets:
+        print("Missing required arguments to pasteObjectProperties")
+        return False
+    args = {
+        "source": source,
+        "targets": targets,
+        "pasteMode": pasteMode,
+        "inclusion": inclusion,
+        "exclusion": exclusion
+    }
+    try:
+        res = client.call("ak.wwise.core.object.pasteProperties", args)
+    except Exception as ex:
+        print("call error: {}".format(ex))
+        return False
+    else:
+        return res
+
 
 def createControlInputStructForNewModulator(type = "ModulatorTime",name = "New Modulator",AdditionalKeyValueProperties = {}):
     """Helper function to create a ControlInputStruct for use with setCreateRTPCCurveForObject()
@@ -337,6 +403,7 @@ def createControlInputStructForNewModulator(type = "ModulatorTime",name = "New M
 def setCreateRTPCCurveForObject(ObjIDOrPath, PropertyName, ControlInputStructOrID = None, PointsList=None):
     """Set or create an RTPC curve on an object
     See ak.wwise.core.object.set in wwise docs
+    Only supported in Wwise 2022 and higher
 
     :param ObjIDOrPath: The ID or path of the object which will have the new RTPC curve
     :param PropertyName: The name of the property to be controlled (e.g. OutputBusVolume)
@@ -345,6 +412,9 @@ def setCreateRTPCCurveForObject(ObjIDOrPath, PropertyName, ControlInputStructOrI
     :return: The newly created or modified wwise object(s) or False
 
     """
+    if not checkWwiseVersionIsAtLeast(2022):
+        print("This feature is only supported in Wwise 2022 and higher")
+        return False
     if PointsList is None:
         PointsList = [{"x": 0, "y": 0, "shape": "Linear"}, {"x": 100, "y": 0, "shape": "Linear"}]
     if ControlInputStructOrID is None:
@@ -376,6 +446,17 @@ def setCreateRTPCCurveForObject(ObjIDOrPath, PropertyName, ControlInputStructOrI
 
 
 def getRTPCCurvesForObject(ObjIDOrPath):
+    """Get the RTPC curves for an object
+    See https://www.audiokinetic.com/en/library/edge/?source=SDK&id=wwiseobject_rtpc.html
+    Only supported in Wwise 2022 and higher
+
+    :param ObjIDOrPath: The ID or path of the object
+    :return: The list of RTPC curve structs for the input object
+
+    """
+    if not checkWwiseVersionIsAtLeast(2022):
+        print("This feature is only supported in Wwise 2022 and higher")
+        return False
     if not ObjIDOrPath:
         return False
     res = None
