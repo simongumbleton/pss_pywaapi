@@ -10,6 +10,8 @@ pss_pywaapi/.idea/
 pss_pywaapi/build/
 pss_pywaapi/pss_pywaapi.egg-info/
 pss_pywaapi/pss_helpers/_pycache_/
+pss_pywaapi/venv/
+pss_pywaapi\venv\
 *.pyc
 pss_pywaapi/.eggs/
 pss_pywaapi/venv/Lib/site-packages/_cffi_backend.cp38-win32.pyd
@@ -1001,3 +1003,4 @@ Examples/.idea/misc.xml
 Examples/.idea/inspectionProfiles/profiles_settings.xml
 Examples/.idea/Examples.iml
 Examples/.idea/workspace.xml
+*.pyd

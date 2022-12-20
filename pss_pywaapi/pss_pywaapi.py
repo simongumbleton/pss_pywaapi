@@ -31,7 +31,32 @@ EventActionIDs = {
 }
 
 def getWwiseUserSetting_WAMPport():
+    """Get the WAMP port saved in the user setting file for the authoring tool"""
     return wwise_settings.get_wamp_port()
+
+def getWwiseVersion():
+    """Get the Wwise Version struct"""
+    result = client.call("ak.wwise.core.getInfo")
+    if result:
+        return result["version"]
+    else:
+        return False
+
+def checkWwiseVersionIsAtLeast(year=2019,major=0,minor=0,build=0):
+    """ Check the wwise version is at least equal to the version required
+    For version info see https://www.audiokinetic.com/en/library/edge/?source=SDK&id=ak_wwise_core_getinfo.html
+    :param year: The year element of the wwise version
+    :param major: The major element of the wwise version
+    :param minor: The minor element of the wwise version
+    :param build: The build element of the wwise version
+    :return: True if the wwise version is equal or greater than the input, otherwise False
+    """
+    version = getWwiseVersion()
+    if not version:
+        print("Error getting wwise version")
+        return False
+    return version["year"] >= year and version["major"] >= major and version["minor"] >= minor and version["build"] >= build
+
 
 def connect(port = None):
     """ Connect to Wwise authoring api , on the port provided. If port is left empty, we try to read the port set in the user preferences settings file.
