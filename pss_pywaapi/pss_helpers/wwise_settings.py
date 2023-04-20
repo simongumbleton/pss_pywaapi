@@ -1,5 +1,6 @@
 import sys
 import pathlib
+import os
 import xml.etree.ElementTree as ET
 
 
@@ -25,23 +26,45 @@ def get_wwise_datadir() -> pathlib.Path:
     else:
         return None
 
-def get_wwise_usersetting(settingName = None):
+def get_wwise_usersetting(settingName = None,DirectoriesToCheck=[]):
     if not settingName:
         return None
-    ww_datadir = get_wwise_datadir()
-    if not ww_datadir or not ww_datadir.exists():
+    for Dir in DirectoriesToCheck:
+        for file in find_wsettings_files_in_dir(Dir):
+            result = parse_setting_file_for_value(settingName,file)
+            if result:
+                return result
+    return None
+
+
+
+def parse_setting_file_for_value(settingName=None,settingFile=None):
+    if not settingName or not settingFile:
         return None
-    settingsFile = ww_datadir / "Wwise.wsettings"
-    if not settingsFile.exists():
+    if not os.path.exists(settingFile):
         return None
-    tree = ET.parse(settingsFile)
+    tree = ET.parse(settingFile)
     root = tree.getroot()
     matches = root.findall(".//Property[@Name='{0}']".format(settingName))
     for match in matches:
-        #print(match.attrib)
+        # print(match.attrib)
         return match.attrib
     else:
+        matches = root.findall(".//{0}".format(settingName))
+        for match in matches:
+            # print(match.attrib)
+            return match.attrib
         return None
+
+def find_wsettings_files_in_dir(DirectoryToSearch=None):
+    results = []
+    if not os.path.isdir(DirectoryToSearch):
+        return results
+    for f in os.listdir(DirectoryToSearch):
+        if f.endswith('.wsettings'):
+            filepath = os.path.join(DirectoryToSearch,f)
+            results.append(filepath)
+    return results
 
 def get_wamp_port():
     attrib = get_wwise_usersetting("Waapi\WampPort")
