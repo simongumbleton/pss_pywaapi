@@ -36,11 +36,14 @@ def getWwiseUserSetting_WAMPport():
 
 def getWwiseUserSettingByName(Name=""):
     """ Get a named setting from the various .wsettings files wwise generates
+    wsetting files contain setting dictionaries that look like this
+    DefaultOutputBus Name="SFX" ID="{DA827D60-6AFF-47BB-AB1B-BD786FCFD3E6}"
+    or
+    Property Name="Waapi\WampPort" Type="int32" Value="8095"
+
     :param Name: Name of the setting to retrieve
     :return: Dictionary of Key Value pairs relating to the requested setting, or None if not found
-    e.g. <DefaultOutputBus Name="SFX" ID="{DA827D60-6AFF-47BB-AB1B-BD786FCFD3E6}"/>
-    or
-    <Property Name="Waapi\WampPort" Type="int32" Value="8095"/>
+
     """
     if not Name:
         return None
