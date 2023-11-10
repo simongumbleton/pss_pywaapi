@@ -751,6 +751,35 @@ def deleteWwiseObject(objectID):
 
 ###  Searching the project  ######
 
+def WAQLsearchForObject(searchterm,returnProperties=[]):
+    """Perform a search using WAQL, return additional properties for each object.
+    For more info on options see Wwise SDK for ak.wwise.core.object.get
+    https://www.audiokinetic.com/library/edge/?source=SDK&id=ak_wwise_core_object_get.html
+
+    :param searchterm: WAQL formatted string
+    :param returnProperties: Additional properties to return for each object
+    :return: Result structure or False
+
+    """
+    baseProperties = ["id","type", "name", "path"]
+    arguments = {
+        "waql": searchterm,
+        "options": {
+            "return": baseProperties+returnProperties
+        }
+    }
+    try:
+        res = client.call("ak.wwise.core.object.get", arguments)
+    except Exception as ex:
+        print("call error: {}".format(ex))
+        return False
+    else:
+        if res != None:
+            return res["return"]
+        else:
+            return []
+
+
 def getSelectedObjects(properties=[]):
     """Get the currently selected object(s), returning any extra properties.
     By default objects will return ["id","type", "name", "path"] + properties[]
